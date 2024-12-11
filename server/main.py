@@ -7,6 +7,8 @@
 from sys import version_info, platform
 import sys
 
+from server.libs.spotify_service import SpotifyService
+
 if version_info < (3, 6):
     sys.exit("\033[91mError: MLSC requires Python 3.6 or greater.")
 
@@ -126,6 +128,15 @@ class Main():
                 self._notification_queue_webserver_out,
             ))
         self._notification_service_process.start()
+
+        # Start Spotify Service
+        self._spotify_service = SpotifyService()
+        self._spotify_service_process = Process(
+            target=self._spotify_service.start,
+            args=(
+                self._config
+            )
+        )
 
         # Start Webserver
         self._webserver = Webserver()
