@@ -7,7 +7,6 @@
 from sys import version_info, platform
 import sys
 
-from server.libs.spotify_service import SpotifyService
 
 if version_info < (3, 6):
     sys.exit("\033[91mError: MLSC requires Python 3.6 or greater.")
@@ -17,10 +16,14 @@ from libs.notification_service import NotificationService
 from libs.webserver.webserver import Webserver
 from libs.device_manager import DeviceManager
 from libs.config_service import ConfigService
+from libs.spotify_service import SpotifyService
+from spotapi.http.request import TLSClient
+
 
 from multiprocessing import Process, Queue, Lock
 from time import sleep
 import subprocess
+from threading import Thread
 import pyaudio
 import logging
 if platform == "linux":
@@ -70,6 +73,9 @@ class Main():
         This function will start all necessary components.
         Let's go :-D
         """
+
+        tls_client = TLSClient("chrome_120", "", auto_retries=3)
+
         # We need a lock to prevent too fast saving and loading actions of the config
         self._config_lock = Lock()
 
@@ -129,15 +135,6 @@ class Main():
             ))
         self._notification_service_process.start()
 
-        # Start Spotify Service
-        self._spotify_service = SpotifyService()
-        self._spotify_service_process = Process(
-            target=self._spotify_service.start,
-            args=(
-                self._config
-            )
-        )
-
         # Start Webserver
         self._webserver = Webserver()
         self._webserver_process = Process(
@@ -163,6 +160,14 @@ class Main():
                 self._py_audio
             ))
         self._audio_process.start()
+
+        # Start Spotify Service
+        self._spotify_service = SpotifyService()
+        self._spotify_service_thread = Thread(
+            target=self._spotify_service.start,
+            args=(self._config_instance, tls_client, self._notification_queue_webserver_out,)
+        )
+        self._spotify_service_thread.start()
 
         self.logger.info("Initialization finished.")
 

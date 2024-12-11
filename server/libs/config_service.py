@@ -36,6 +36,7 @@ class ConfigService():
         self._backup_path = config_folder + config_backup_file
         self._template_path = lib_folder + config_template_file
 
+        print(self._config_path)
         self.logger.debug("Config Files")
         self.logger.debug(f"Config: {self._config_path}")
         self.logger.debug(f"Backup: {self._backup_path}")

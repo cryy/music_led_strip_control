@@ -32,9 +32,11 @@ class EffectPower(Effect):
         missing_values = led_count - r_len_before_resize
         r = np.pad(r, (0, missing_values), 'edge')
 
+
         output = np.array([self._color_service.full_gradients[effect_config["color_mode"]][0, :led_count] * r,
-                           self._color_service.full_gradients[effect_config["color_mode"]][1, :led_count] * r,
-                           self._color_service.full_gradients[effect_config["color_mode"]][2, :led_count] * r])
+                    self._color_service.full_gradients[effect_config["color_mode"]][1, :led_count] * r,
+                    self._color_service.full_gradients[effect_config["color_mode"]][2, :led_count] * r])
+            
         # if there's a high (eg. clap):
         if self.current_freq_detects["high"]:
             self.power_brightness = 1.0

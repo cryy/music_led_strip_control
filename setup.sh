@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Setup script for MLSC
-# https://github.com/TobKra96/music_led_strip_control
+# https://github.com/cryy/music_led_strip_control
 
 
 INST_DIR="/share" # Installation location
@@ -11,7 +11,7 @@ ASOUND_DIR="/etc/asound.conf" # Asound config location
 ALSA_DIR="/usr/share/alsa/alsa.conf" # Alsa config location
 SERVICE_DIR="/etc/systemd/system/mlsc.service" # MLSC systemd service location
 SERVICE_NAME="mlsc.service" # MLSC systemd service name
-GIT_BRANCH="master"
+GIT_BRANCH="feat/spotify-colors"
 
 
 # Colors
@@ -88,13 +88,6 @@ while [[ "$#" > 0 ]]; do case $1 in
     *) usage "Unknown argument passed: $1";shift;shift;;
 esac; done
 
-
-case $GIT_BRANCH in
-    master|dev_2.3);;
-    *) GIT_BRANCH="master";;
-esac
-
-
 echo
 prompt -s "\t          *********************"
 prompt -s "\t          *  Installing $PROJ_NAME  *"
@@ -139,7 +132,7 @@ if [[ -d $PROJ_DIR ]]; then
         fi
 	    sudo mv -T $PROJ_DIR "${PROJ_DIR}_bak"
         prompt -s "\nNew backup of ${PROJ_NAME} created."
-        sudo git clone --depth 1 --branch $GIT_BRANCH https://github.com/TobKra96/music_led_strip_control.git
+        sudo git clone --branch $GIT_BRANCH https://github.com/cryy/music_led_strip_control.git
         prompt -s "\nConfig is stored in .mlsc, in the same directory as the MLSC installation."
         if [[ -f $SERVICE_DIR ]]; then
             if [[ $systemctl_status == 'active' ]]; then
@@ -149,7 +142,11 @@ if [[ -d $PROJ_DIR ]]; then
         fi
     fi
 else
-    sudo git clone --depth 1 --branch $GIT_BRANCH https://github.com/TobKra96/music_led_strip_control.git
+    sudo git clone --branch $GIT_BRANCH https://github.com/cryy/music_led_strip_control.git
+    sudo cd ./music_led_strip_control
+    sudo git fetch --all
+    sudo git checkout feat/spotify-colors
+    sudo cd ..
 fi
 
 # Install/update modules from requirements.txt.

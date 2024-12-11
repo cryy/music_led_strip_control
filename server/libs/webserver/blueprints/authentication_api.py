@@ -6,7 +6,7 @@ from flask_login import current_user, logout_user, login_required
 authentication_api = Blueprint('authentication_api', __name__)
 
 
-@authentication_api.before_app_first_request
+@authentication_api.before_app_request
 def first():
     Executer.instance.authentication_executer.first_call()
 
