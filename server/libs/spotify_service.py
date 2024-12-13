@@ -116,7 +116,7 @@ class SpotifyService():
                         album_image_stream = urlopen(album_image_url)
 
                         color_thief = ColorThief(album_image_stream)
-                        color_palette = color_thief.get_palette(3)
+                        color_palette = color_thief.get_palette(3, quality=1)
                         self.logger.debug("Generated new color palette. %s", color_palette)
                         
                         self._config_service.load_config()
